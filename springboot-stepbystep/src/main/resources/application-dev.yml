@@ -1,0 +1,85 @@
+server:
+  port: 9091
+
+
+
+#########数据源配置#########
+spring:
+  datasource:
+    name: oa
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      filter: stat,wall,log4j
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.3.108:3306/microserver?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+      username: root
+      password: 123456
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      time-between-eviction-runs-millis: 60000
+      #一个连接在池中最小生存的时间
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 20
+  jpa:
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+  ############## thymeleaf ############
+  thymeleaf:
+    mode: HTML5  #模板的模式，支持HTML、XML、TEXT、JAVASCRIPT
+    encoding: UTF-8  #编码
+    servlet:
+      content-type: text/html    #内容类别
+    cache: false #开发配置为false，避免修改模板还要重启服务器
+    prefix: classpath:/templates/ #配置模板路径，默认是templates
+  ################ redis ################
+  redis:
+    database: 0
+    host: 192.168.3.8
+    port: 6379
+  ############ activemq ##########
+  activemq:
+    broker-url: tcp://localhost:61616
+    in-memory: true
+    pool:
+      enabled: false
+    packages:
+      trust-all: true
+
+##########mybatis配置#############
+mybatis:
+  mapper-locations: classpath:/mappers/*.xml
+  type-aliases-package: com.wps.mybatis.dao
+
+#######日志配置######
+logging:
+  config: classpath:log4j2.xml
+
+###########应用监控配置##############
+# actuator监控
+management:
+  server:
+    # 设置监控服务端口
+    port: 8081
+  endpoints:
+    # 设置端点是否可用 默认只有shutdown可用
+    enabled-by-default: true
+    web:
+      # 设置是否暴露端点 默认只有health和info可见
+      exposure:
+        # 包括所有端点
+        include: "*" # 注意需要添加引号
+        # 排除端点
+        exclude: shutdown
+
+
+
+

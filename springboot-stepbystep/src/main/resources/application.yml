@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: dev  #激活开发环境配置
+  mail:
+    host: smtp.qq.com
+    username: 793597462@qq.com
+    password: fyikzfhgoufxbfcj
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true

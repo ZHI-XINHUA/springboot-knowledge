@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Detect Custome Protocol</title>
+    <script type="text/javascript" src="js/base64.js"></script>
+    <script type="text/javascript" src="js/json2.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/appname.js"></script>
+    <script type="text/javascript" src="js/checkwps.js"></script>
+    <script type="text/javascript" src="js/launchwps.js"></script>
+    <script type="text/javascript" src="js/wps.js"></script>
+    <script>
+
+        function protectOpen(){
+            var fileId = $("#fileid").val();
+            var type = $("#type").val();
+            _wps.openDoc({
+                //"docId": docId, //文档ID
+                "uploadPath": "http://localhost:8080/document/saveFile?fileId=" + fileId+"&type="+type, //保存文档接口
+                "fileName":"http://localhost:8080/document/getFileData/"+type+"/"+fileId,//根据文档id获取服务器文档接口
+                "buttonGroups": "btnChangeToPDF,btnChangeToUOT,btnChangeToUOF",
+                "openType": { //文档打开方式
+                    //文档保护类型，-1：不启用保护模式，0：只允许对现有内容进行修订，1：只允许添加批注，2：只允许修改窗体域(禁止拷贝功能)，3：只读
+                    "protectType": 2,
+                    "password": "123456"
+                }
+            });
+        }
+
+        function openfile(){
+            var fileId = $("#fileid").val();
+            var type = $("#type").val();
+            _wps.openDoc({
+                //"docId": docId, //文档ID
+                "uploadPath": "http://localhost:8080/document/saveFile?fileId=" + fileId+"&type="+type, //保存文档接口
+                "fileName":"http://localhost:8080/document/getFileData/"+type+"/"+fileId,//根据文档id获取服务器文档接口
+                "buttonGroups": "btnChangeToPDF,btnChangeToUOT,btnChangeToUOF",
+                "openType": { //文档打开方式
+                    //文档保护类型，-1：不启用保护模式，0：只允许对现有内容进行修订，1：只允许添加批注，2：只允许修改窗体域(禁止拷贝功能)，3：只读
+                    "protectType": 2,
+                    "password": "123456"
+                }
+            });
+        }
+
+	 
+	 function myopen(){
+	     var fileId = $("#fileid").val();
+	     var type = $("#type").val();
+		 var startData = {
+			name: "oaassist",
+			function: "dispatcher",
+			info: {
+			  fucns: [
+				{
+				  OpenDoc: {      //打开OA文件接口
+					//docId: docId, //文档ID
+					//根据文档id获取服务器指定OA文档接口
+					fileName: "http://localhost:8080/document/getFileData/"+type+"/"+fileId,
+					//保存文档接口
+					uploadPath: "http://localhost:8080/document/saveFile?fileId=" + fileId+"&type="+type,
+				  },
+				   SetButtonGroup: {
+					  setButtonGroupFlag: true,
+						  buttonGroups: {
+							 'WPSExtOfficeTab': {//是否显示OA助手菜单
+							  'OnGetEnabled': true,
+							  'OnGetVisible': true,
+							}/*, "btnAcceptAllRevisions": {
+								"OnGetEnabled": true,
+								"OnGetVisible": true,
+								"OnGetLabel": "接受修订",
+								"GetImage": "icon/yes.ico"
+							}*/
+						}
+					}/*,//调用wps显示/关闭痕迹方法
+                    OnShowRevisionClickedFromWeb: {
+					    bOpenRevision:false,
+                        bShowRevision: false    //true(显示)/false(关闭)标识
+                    }*/
+				},{
+				  openType:{      //设置文件打开模式接口
+					password:"123456",
+					openTye:0//三种状态：0、1、2
+					//0:正常模式打开
+					//1:不可复制模式（不能编辑、不能拷贝模式打开）
+					//2:只读模式（不可编辑、但可以拷贝模式打开）
+				  },
+				},
+			  ]
+			}
+		  };
+		  
+		  var data = JSON.stringify(startData);
+		  //var result = new Buffer(data).toString("base64"); //这里需要引用base64.js
+		 // var result = new Base64().encode(data);
+         var result = base64.encode(data);
+        window.location.href = "ksowebstartupwps://" + result;
+        // this.$supportwps().(getAppName("doc"), result);
+         // launchwps(result);
+		 }
+
+     /**
+      * 打开在线预览文件
+      */
+     function openPreviewFile(){
+         var fileId = $("#fileid").val();
+         var type = $("#type").val();
+         var docId = "";
+         $.get("http://localhost:8080/document/preview/" + type+"/"+fileId)//从后台获取指定预览文件的内容(OA厂商提供)
+             .then(response => {
+             var iframe = document.getElementById("iframe");
+            iframe.src = response.data.url;//将预览文件内容response.data.url传给页面iframe框架
+             console.log(response);
+             _this.modalPreview = true; //显示预览弹窗
+             iframe.style.display = "block"; //将iframe切换成显示状态
+         });
+     }
+
+
+    </script>
+</head>
+
+<body>
+	文件id：<input type="text" id="fileid" value="56c7472afb6088b563b2cf022831499e"/><br>
+    文件类型：<input type="text" id="type" value="2"/>（1：正文；2:正文附件；3:相关公文的附件；4：意见的附件；7：通知公告附件；8：刊物附件）<br>
+    <button id="myopen" onclick="myopen(); return false;">打开自定文件</button>
+    <button id="openPreviewFile" onclick="openPreviewFile(); return false;">打开在线预览文件</button>
+    <button id="openDoc" onclick="protectOpen()">保护模式打开</button>
+</body>
+
+</html>
