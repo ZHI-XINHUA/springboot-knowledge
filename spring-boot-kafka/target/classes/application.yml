@@ -1,0 +1,19 @@
+spring:
+  kafka:
+    # kafka连接地址
+    bootstrap-servers: localhost:9092
+    # 生产者配置
+    producer:
+      # key value 序列化器
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    # 消费者
+    consumer:
+      group-id: test-01
+      # key value 解码器
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+
+kafka:
+  topic: test
