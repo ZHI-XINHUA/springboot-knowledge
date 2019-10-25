@@ -34,7 +34,7 @@ public class Consumer4FanoutExchange {
         channel.exchangeDeclare(exchange,exchangeType,durable,autoDelete,arguments);
 
         //5、声明消费队列
-        //String queue, boolean durable, boolean exclusive, boolean autoDelete,Map<String, Object> arguments
+        //String queue（队列名称）, boolean durable（是否持久化）, boolean exclusive（独占）, boolean autoDelete（自动删除）,Map<String, Object> arguments
         String queue = "test_fanout_queue";//队列名称
         channel.queueDeclare(queue,false,false,false,null);
 
@@ -50,7 +50,7 @@ public class Consumer4FanoutExchange {
             BasicProperties properties = delivery.getProperties();
 
             String message = new String(delivery.getBody(), "UTF-8");
-            System.out.println("接收到信息："+message);
+            System.out.println("Consumer4FanoutExchange 接收到信息："+message);
         };
 
         //消费者被取消时的回调
